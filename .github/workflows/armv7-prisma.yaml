@@ -60,12 +60,12 @@ jobs:
         run: |
           cross build \
             --target armv7-unknown-linux-gnueabihf \
-            -C linker=arm-linux-gnueabihf-gcc \
             --release -p query-engine \
             -p query-engine-node-api \
             -p schema-engine-cli \
             -p prisma-fmt
         env:
+          RUSTFLAGS: "-C linker=arm-linux-gnueabihf-gcc"
           PKG_CONFIG_ALLOW_CROSS: 1
           PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig/:$PKG_CONFIG_PATH
           PKG_CONFIG_SYSROOT_DIR: /usr/arm-linux-gnueabihf/:$PKG_CONFIG_SYSROOT_DIR
