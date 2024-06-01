@@ -10,14 +10,17 @@ Building Prisma Engine for ARMv7
 
 ```shell
 PRISMA_QUERY_ENGINE_BINARY=path/to/query-engine
-PRISMA_QUERY_ENGINE_LIBRARY=path/to/libquery_engine.so
+PRISMA_QUERY_ENGINE_LIBRARY=path/to/libquery_engine.so.node
 PRISMA_SCHEMA_ENGINE_BINARY=path/to/schema-engine
 ```
 
-Test your environment variable:
+Test your environment variable: `npx prisma -v`
 
-```shell
-npx prisma -v
+```log
+prisma                  : 5.14.0
+Architecture            : arm
+Query Engine (Node-API) : libquery-engine e9771e62de70f79a5e1c604a2d7c8e2a0a874b48 (at libquery_engine.so.node, resolved by PRISMA_QUERY_ENGINE_LIBRARY)
+Schema Engine           : schema-engine-cli e9771e62de70f79a5e1c604a2d7c8e2a0a874b48 (at schema-engine, resolved by PRISMA_SCHEMA_ENGINE_BINARY)
 ```
 
 Learn more: https://www.prisma.io/docs/orm/more/under-the-hood/engines
