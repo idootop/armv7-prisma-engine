@@ -1,0 +1,60 @@
+name: Building Prisma Engine for ARMv7
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Building Prisma Engine for ARMv7"
+    env:
+      SQLITE_MAX_VARIABLE_NUMBER: 250000
+      SQLITE_MAX_EXPR_DEPTH: 10000
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout prisma/prisma-engines
+        uses: actions/checkout@v4
+        with:
+          repository: "prisma/prisma-engines"
+          ref: 5.14.0
+
+      - name: Setup rust env
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: armv7-unknown-linux-gnueabihf
+
+      - name: Setup rust cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Setup cross with OpenSSL
+        run: |-
+          cat <<EOF > Cross.toml
+            [target.armv7-unknown-linux-gnueabihf]
+            pre-build = [
+              "dpkg --add-architecture $CROSS_DEB_ARCH",
+              "apt-get update && apt-get install --assume-yes libssl-dev:$CROSS_DEB_ARCH"
+            ]
+          EOF
+
+      - name: Build engine
+        run: |
+          cargo build --target armv7-unknown-linux-gnueabihf --release -p query-engine -p query-engine-node-api -p schema-engine-cli -p prisma-fmt
+        env:
+          PKG_CONFIG_ALLOW_CROSS: 1
+          CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER: arm-linux-gnueabihf-gcc
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: |
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/schema-engine
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/prisma-fmt
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/query-engine
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/libquery_engine.dylib
