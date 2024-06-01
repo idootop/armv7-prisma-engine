@@ -35,33 +35,18 @@ jobs:
 
       - name: Setup Cross-compile env
         run: |
-          cat << EOF | sudo tee /etc/apt/sources.list
-          # x86 Support
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-backports main restricted universe multiverse
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
-          # ARM Support
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main restricted universe multiverse
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted universe multiverse
+          cargo install cross
+          cat <<EOF > Cross.toml
+            [target.armv7-unknown-linux-gnueabihf]
+            pre-build = [
+              "dpkg --add-architecture $CROSS_DEB_ARCH",
+              "apt-get update && apt-get install --assume-yes libssl-dev:$CROSS_DEB_ARCH"
+            ]
           EOF
-
-          sudo dpkg --add-architecture armhf
-          sudo apt update
-          sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross libssl-dev:armhf
-
-          rustup target add armv7-unknown-linux-gnueabihf
 
       - name: Build engine
         run: |
-          cargo build --target armv7-unknown-linux-gnueabihf --release -p query-engine -p query-engine-node-api -p schema-engine-cli -p prisma-fmt
-        env:
-          PKG_CONFIG_ALLOW_CROSS: 1
-          PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig/:$PKG_CONFIG_PATH
-          PKG_CONFIG_SYSROOT_DIR: /usr/arm-linux-gnueabihf/:$PKG_CONFIG_SYSROOT_DIR
-          CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER: arm-linux-gnueabihf-gcc
+          cross build --target armv7-unknown-linux-gnueabihf --release -p query-engine -p query-engine-node-api -p schema-engine-cli -p prisma-fmt
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
