@@ -35,8 +35,25 @@ jobs:
 
       - name: Setup Cross-compile env
         run: |
-          sudo dpkg --add-architecture armhf && sudo apt update
+          cat << EOF | sudo tee /etc/apt/sources.list
+          # x86 Support
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-backports main restricted universe multiverse
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
+          # ARM Support
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main restricted universe multiverse
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted universe multiverse
+          EOF
+
+          sudo dpkg --add-architecture armhf
+          sudo apt update
           sudo apt install -y gcc-arm-linux-gnueabihf libssl-dev:armhf
+
+          rustup target add armv7-unknown-linux-gnueabihf
+
           cargo install cross
 
       - name: Build engine
