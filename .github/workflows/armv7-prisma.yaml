@@ -35,18 +35,23 @@ jobs:
 
       - name: Setup Cross-compile env
         run: |
+          sudo dpkg --add-architecture armhf && sudo apt update
+          sudo apt install -y gcc-arm-linux-gnueabihf libssl-dev:armhf
           cargo install cross
-          cat <<EOF > Cross.toml
-            [target.armv7-unknown-linux-gnueabihf]
-            pre-build = [
-              "dpkg --add-architecture $CROSS_DEB_ARCH",
-              "apt-get update && apt-get install --assume-yes libssl-dev:$CROSS_DEB_ARCH"
-            ]
-          EOF
 
       - name: Build engine
         run: |
-          cross build --target armv7-unknown-linux-gnueabihf --release -p query-engine -p query-engine-node-api -p schema-engine-cli -p prisma-fmt
+          cross build \
+            --target armv7-unknown-linux-gnueabihf \
+            -C linker=arm-linux-gnueabihf-gcc \
+            --release -p query-engine \
+            -p query-engine-node-api \
+            -p schema-engine-cli \
+            -p prisma-fmt
+        env:
+          PKG_CONFIG_ALLOW_CROSS: 1
+          PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig/:$PKG_CONFIG_PATH
+          PKG_CONFIG_SYSROOT_DIR: /usr/arm-linux-gnueabihf/:$PKG_CONFIG_SYSROOT_DIR
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
