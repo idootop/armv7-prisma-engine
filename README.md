@@ -10,6 +10,7 @@ Building Prisma Engine for ARMv7
 
 ```shell
 PRISMA_QUERY_ENGINE_BINARY=path/to/query-engine
+PRISMA_QUERY_ENGINE_LIBRARY=path/to/libquery_engine.so
 PRISMA_SCHEMA_ENGINE_BINARY=path/to/schema-engine
 ```
 

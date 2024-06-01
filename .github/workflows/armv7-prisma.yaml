@@ -65,8 +65,12 @@ jobs:
 
       - name: Build engine
         run: |
-          cargo build --release --target armv7-unknown-linux-gnueabihf
-          chmod +x ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/schema-engine
+          cargo build \
+            --target armv7-unknown-linux-gnueabihf \
+            --release -p query-engine \
+            -p query-engine-node-api \
+            -p schema-engine-cli \
+            -p prisma-fmt
         env:
           PKG_CONFIG_ALLOW_CROSS: 1
           PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
@@ -78,18 +82,24 @@ jobs:
         with:
           name: binaries
           path: |
-            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/*
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/schema-engine
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/prisma-fmt
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/query-engine
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/libquery_engine.so
 
-      # - name: Release ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     allowUpdates: true
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     name: ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
-      #     tag: ${{ inputs.prisma_tag }}
-      #     draft: false
-      #     prerelease: false
-      #     makeLatest: latest
-      #     removeArtifacts: true
-      #     artifacts: |
-      #       ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/*
+      - name: Release ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
+          tag: ${{ inputs.prisma_tag }}
+          draft: false
+          prerelease: false
+          makeLatest: latest
+          removeArtifacts: true
+          artifacts: |
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/schema-engine
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/prisma-fmt
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/query-engine
+            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/libquery_engine.so
