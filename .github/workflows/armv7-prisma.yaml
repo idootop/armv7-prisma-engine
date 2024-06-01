@@ -87,19 +87,19 @@ jobs:
             ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/query-engine
             ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/libquery_engine.so
 
-      - name: Release ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
-          tag: ${{ inputs.prisma_tag }}
-          draft: false
-          prerelease: false
-          makeLatest: latest
-          removeArtifacts: true
-          artifacts: |
-            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/schema-engine
-            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/prisma-fmt
-            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/query-engine
-            ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/libquery_engine.so
+      # - name: Release ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     allowUpdates: true
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     name: ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
+      #     tag: ${{ inputs.prisma_tag }}
+      #     draft: false
+      #     prerelease: false
+      #     makeLatest: latest
+      #     removeArtifacts: true
+      #     artifacts: |
+      #       ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/schema-engine
+      #       ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/prisma-fmt
+      #       ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/query-engine
+      #       ${{ github.workspace }}/target/armv7-unknown-linux-gnueabihf/release/libquery_engine.so
