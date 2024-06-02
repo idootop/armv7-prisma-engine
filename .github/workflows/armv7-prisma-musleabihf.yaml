@@ -1,4 +1,4 @@
-name: Building Prisma Engine for ARMv7
+name: Building Prisma Engine for ARMv7 (musleabihf)
 on:
   workflow_dispatch:
     # inputs:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: "Building Prisma Engine for ARMv7"
+    name: "Building Prisma Engine for ARMv7 (musleabihf)"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,12 +24,6 @@ jobs:
         with:
           repository: "prisma/prisma-engines"
           ref: 5.14.0 # ${{ inputs.prisma_tag }}
-
-      - name: Build with Docker
-        run: |
-          docker pull messense/rust-musl-cross:armv7-musleabihfhf
-          alias rust-musl-builder='docker run --rm -it -v "$(pwd)":/home/rust/src messense/rust-musl-cross:armv7-musleabihfhf'
-          rust-musl-builder cargo build --release
 
       - name: Setup rust env
         uses: dtolnay/rust-toolchain@stable
@@ -95,12 +89,12 @@ jobs:
             ${{ github.workspace }}/target/armv7-unknown-linux-musleabihf/release/query-engine
             ${{ github.workspace }}/target/armv7-unknown-linux-musleabihf/release/libquery_engine.so.node
 
-      # - name: Release ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
+      # - name: Release ARMv7 (musleabihf) Prisma Engine ${{ inputs.prisma_tag }}
       #   uses: ncipollo/release-action@v1
       #   with:
       #     allowUpdates: true
       #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     name: ARMv7 Prisma Engine ${{ inputs.prisma_tag }}
+      #     name: ARMv7 (musleabihf) Prisma Engine ${{ inputs.prisma_tag }}
       #     tag: ${{ inputs.prisma_tag }}
       #     draft: false
       #     prerelease: false
